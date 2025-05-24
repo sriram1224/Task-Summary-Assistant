@@ -48,7 +48,7 @@ exports.summarizeTodos = async (req, res) => {
             headers: {
               Authorization: `Bearer ${key}`,
               "Content-Type": "application/json",
-              "HTTP-Referer": "http://localhost:3001", // Adjust in prod
+              "HTTP-Referer": "https://task-summary-assistant.onrender.com",
             },
           }
         );
