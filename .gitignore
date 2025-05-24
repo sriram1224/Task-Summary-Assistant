@@ -1,1 +1,7 @@
-/backend/.env
+
+MONGO_URI=mongodb+srv://TODO:Todo123@todo.lsouyog.mongodb.net/?retryWrites=true&w=majority&appName=Todo
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/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
+
+OPENROUTER_API_KEY1=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
+OPENROUTER_API_KEY2=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
+OPENROUTER_API_KEY3=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
