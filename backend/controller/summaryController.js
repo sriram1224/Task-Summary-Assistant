@@ -1,16 +1,15 @@
-const axios = require("axios");
+const {
+  BedrockRuntimeClient,
+  InvokeModelCommand,
+} = require("@aws-sdk/client-bedrock-runtime");
 const Todo = require("../models/Todo");
+require("dotenv").config();
 
-const apiKeys = [
-  process.env.OPENROUTER_API_KEY1,
-  process.env.OPENROUTER_API_KEY2,
-  process.env.OPENROUTER_API_KEY3,
-].filter(Boolean);
+const bedrockClient = new BedrockRuntimeClient({ region: "us-east-1" });
 
 exports.summarizeTodos = async (req, res) => {
   try {
     const userId = req.user._id;
-
     const todos = await Todo.find({ userId, completed: false }).sort({
       createdAt: -1,
     });
@@ -33,51 +32,53 @@ exports.summarizeTodos = async (req, res) => {
       .join("\n\n");
 
     const prompt = `Summarize the following to-do list clearly in 2-3 lines with a short overview and one emoji:\n\n${todoText}`;
-    const messages = [{ role: "user", content: prompt }];
 
-    let summary = null;
-    for (const key of apiKeys) {
-      try {
-        const response = await axios.post(
-          "https://openrouter.ai/api/v1/chat/completions",
-          {
-            model: "google/gemini-2.0-flash-exp:free",
-            messages,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${key}`,
-              "Content-Type": "application/json",
-              "HTTP-Referer": "https://task-summary-assistant.onrender.com",
-            },
-          }
-        );
+    const requestBody = {
+      anthropic_version: "bedrock-2023-05-31",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      max_tokens: 1024,
+    };
 
-        summary = response.data.choices[0].message.content;
-        break;
-      } catch (err) {
-        console.error(`❌ LLM failed with key ${key.slice(-4)}:`, err.message);
-      }
-    }
-
-    if (!summary) {
-      return res
-        .status(429)
-        .json({ message: "All LLM API keys failed or quota exceeded." });
-    }
-
-    const slackMessage = `📝 *Todo Summary*\n\n*Tasks Overview:*\n${summary}\n\n*Total Incomplete Tasks:* ${todos.length}`;
-
-    await axios.post(process.env.SLACK_WEBHOOK_URL, {
-      text: slackMessage,
+    const command = new InvokeModelCommand({
+      modelId:
+        "arn:aws:bedrock:us-east-1:859958574074:inference-profile/us.anthropic.claude-sonnet-4-20250514-v1:0",
+      contentType: "application/json",
+      accept: "application/json",
+      body: JSON.stringify(requestBody),
     });
+
+    const response = await bedrockClient.send(command);
+    const jsonResponse = JSON.parse(new TextDecoder().decode(response.body));
+    const summary =
+      jsonResponse.content?.[0]?.text?.trim() ||
+      "✅ You have some pending tasks, but I couldn't summarize them right now.";
+
+    const slackMessage = {
+      text: `📝 *Todo Summary*\n\n*Tasks Overview:*\n${summary}\n\n*Total Incomplete Tasks:* ${todos.length}`,
+    };
+    console.log(process.env.SLACK_WEBHOOK_URL);
+
+    const slackResponse = await fetch(process.env.SLACK_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(slackMessage),
+    });
+
+    if (!slackResponse.ok) {
+      throw new Error(`Slack webhook failed: ${slackResponse.statusText}`);
+    }
 
     return res.status(200).json({
       message: "All tasks summarized and posted to Slack.",
       summary,
     });
   } catch (err) {
-    console.error("❌ Error in /summarize:", err.message);
+    console.error("❌ Error in /summarize:", err);
     return res.status(500).json({
       message: "Error summarizing tasks.",
       error: err.message,
