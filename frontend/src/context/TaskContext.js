@@ -112,6 +112,7 @@ export const TaskProvider = ({ children }) => {
     }
   };
 
+  const clearTasks = () => setTasks([]);
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -121,11 +122,12 @@ export const TaskProvider = ({ children }) => {
       value={{
         tasks,
         loading,
+        fetchTasks,
         addTask,
         updateTask,
         deleteTask,
         markComplete,
-        fetchTasks,
+        clearTasks, // <-- add this
       }}
     >
       {children}

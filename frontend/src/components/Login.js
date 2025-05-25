@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState("");
@@ -22,6 +23,7 @@ const Login = ({ onLogin }) => {
       if (!res.ok) throw new Error("Invalid credentials");
       const data = await res.json();
       localStorage.setItem("token", data.token);
+      toast.success("Login successful!");
       if (onLogin) onLogin();
       navigate("/");
     } catch (err) {

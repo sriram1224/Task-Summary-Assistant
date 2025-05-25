@@ -1,9 +1,10 @@
-/* eslint-disable no-unused-vars */
+import { useTasks } from "../context/TaskContext";
 import React, { useState, useRef, useEffect } from "react";
 import Logo from "./Logo";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
+  const { clearTasks } = useTasks();
   const [notifOpen, setNotifOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
 
@@ -26,6 +27,7 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    clearTasks(); // <-- clear tasks on logout
     setIsAuthenticated(false);
     navigate("/login");
   };

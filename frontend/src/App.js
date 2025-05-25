@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { Toaster } from "sonner";
 
 import "./App.css";
 import { TaskProvider } from "./context/TaskContext";
@@ -19,6 +20,15 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // null = loading
 
   useEffect(() => {
+    const handleStorageChange = () => {
+      const token = localStorage.getItem("token");
+      setIsAuthenticated(!!token);
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  useEffect(() => {
     const token = localStorage.getItem("token");
     setIsAuthenticated(!!token);
   }, []);
@@ -29,6 +39,7 @@ function App() {
 
   return (
     <TaskProvider>
+      <Toaster position="top-right" richColors />
       <Router>
         {isAuthenticated ? (
           // When token exists, show full app layout
@@ -78,3 +89,4 @@ function App() {
 }
 
 export default App;
+
