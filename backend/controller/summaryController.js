@@ -31,7 +31,7 @@ exports.summarizeTodos = async (req, res) => {
       )
       .join("\n\n");
 
-    const prompt = `Summarize the following to-do list clearly in 2-3 lines with a short overview and one emoji:\n\n${todoText}`;
+    const prompt = `Summarize the following to-do list clearly in 2-3 lines with crispy answer and one emoji:\n\n${todoText}`;
 
     const requestBody = {
       anthropic_version: "bedrock-2023-05-31",
@@ -61,7 +61,6 @@ exports.summarizeTodos = async (req, res) => {
     const slackMessage = {
       text: `📝 *Todo Summary*\n\n*Tasks Overview:*\n${summary}\n\n*Total Incomplete Tasks:* ${todos.length}`,
     };
-    console.log(process.env.SLACK_WEBHOOK_URL);
 
     const slackResponse = await fetch(process.env.SLACK_WEBHOOK_URL, {
       method: "POST",
