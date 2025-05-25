@@ -18,6 +18,7 @@ A full-stack application where users can create and manage personal to-do items,
 ## 🧪 Test User Credentials
 
 You can use the following credentials to test the application without creating a new account:
+
 Email: user@gmail.com
 Password: user@123
 
@@ -28,14 +29,14 @@ Password: user@123
 
 ## 🛠️ Tech Stack
 
-| Layer    | Tech Used                             |
-| -------- | ------------------------------------- |
-| Frontend | React (JavaScript, Tailwind CSS)      |
-| Backend  | Node.js (Express.js)                  |
-| Database | MongoDB Atlas                         |
-| LLM      | Claude Sonnet 4 (via AWS Bedrock)     |
-| Slack    | Incoming Webhooks                     |
-| Hosting  | (Optional) Vercel / Render / Supabase |
+| Layer    | Tech Used                         |
+| -------- | --------------------------------- |
+| Frontend | React (JavaScript, Tailwind CSS)  |
+| Backend  | Node.js (Express.js)              |
+| Database | MongoDB Atlas                     |
+| LLM      | Claude Sonnet 4 (via AWS Bedrock) |
+| Slack    | Incoming Webhooks                 |
+| Hosting  | Render(Backend) Vercel(Frontend)  |
 
 ---
 
