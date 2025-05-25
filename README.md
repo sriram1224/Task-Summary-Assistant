@@ -108,6 +108,14 @@ The backend exposes the following RESTful endpoints:
 
 > 🔐 All endpoints require user authentication.
 
+## 📬 Postman Collection
+
+You can access and test the API using the following Postman collection:
+
+🔗 [Click here to open the Todo Summary Assistant Postman Collection](https://www.postman.com/sriram1213/todo/collection/l6m3kee/todo?action=share&creator=32439500)
+
+> Use this collection to test all backend routes like creating todos, deleting, summarizing, etc.
+
 ### 💻 Frontend Setup (`/frontend`)
 
 1. Open a new terminal and navigate to the `frontend` folder:
